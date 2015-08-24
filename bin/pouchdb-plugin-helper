@@ -1,0 +1,163 @@
+#!/usr/bin/env node
+
+var spawn = require('child_process').spawn;
+var join = require('path').join;
+var fs = require('fs');
+var glob = require('glob');
+
+function run(cmd, args) {
+  var proc = spawn(cmd, args);
+  proc.stdout.pipe(process.stdout);
+  proc.stderr.pipe(process.stderr);
+
+  return proc;
+}
+
+var root = join(__dirname, '..');
+var nodemods = join(root, 'node_modules');
+var bin = join(nodemods, '.bin');
+
+var package = JSON.parse(fs.readFileSync('./package.json'), {encoding: 'utf8'});
+
+function runLint(cb) {
+  var eslintNormal = run(join(bin, 'eslint'), [
+    '-c', join(root, 'eslint'),
+  ].concat(
+    glob.sync('*.js')
+  ).concat(
+    glob.sync('lib/*.js')
+  ));
+  eslintNormal.on('close', function (eslintNormalExitCode) {
+    if (eslintNormalExitCode) {
+      return cb(eslintNormalExitCode);
+    }
+    var eslintTest = run(join(bin, 'eslint'), [
+      '-c', join(root, 'eslint-test'),
+    ].concat(
+      glob.sync('test/*.js')
+    ));
+    eslintTest.on('close', cb);
+  });
+}
+
+var MOCHA_CMD = [
+  join(bin, '_mocha'),
+  '--colors',
+  '--compilers', 'js:pouchdb-plugin-helper/mocha-babel',
+  '-R', 'spec'
+];
+
+function runCoverage(cb) {
+  var istanbul = run(join(bin, 'istanbul'), [
+    'cover',
+    '-x', 'designdoc.js',
+    '--'
+  ].concat(MOCHA_CMD));
+  istanbul.on('close', function (istanbulExitCode) {
+    if (istanbulExitCode) {
+      return cb(istanbulExitCode);
+    }
+    var checkCov = run(join(bin, 'istanbul'), [
+      'check-coverage',
+      '--statement', '100',
+      '--branch', '100',
+      '--function', '100'
+    ]);
+    checkCov.on('close', cb);
+  });
+}
+
+function runJSTest(cb) {
+  var mocha = run('node', MOCHA_CMD);
+  mocha.on('close', cb);
+}
+
+function runTest(cb) {
+  runLint(function (lintExitCode) {
+    if (lintExitCode) {
+      return cb(lintExitCode);
+    }
+    runCoverage(cb);
+  });
+}
+
+function runBuild(cb) {
+  try {
+    fs.mkdirSync('dist');
+  } catch (e) {}
+
+  var name = join('dist', package.name + '.js');
+  var minName = join('dist', package.name + '.min.js')
+  var browserify = run(join(bin, 'browserify'), [
+    'index.js',
+    '-g', join(nodemods, 'es3ify'),
+    '-s', process.argv[3],
+    '-o', name
+  ]);
+  browserify.on('close', function (browserifyExitCode) {
+    if (browserifyExitCode) {
+      return cb(browserifyExitCode);
+    }
+    var uglifyjs = run(join(bin, 'uglifyjs'), [
+      '-mc',
+      '-o', minName,
+      name
+    ]);
+    uglifyjs.on('close', cb);
+  });
+}
+
+function runSemanticRelease(cb) {
+  var pre = run(join(bin, 'semantic-release'), ['pre'])
+  pre.on('close', function (preExitCode) {
+    if (preExitCode) {
+      return cb(preExitCode);
+    }
+    var npm = run('npm', ['publish']);
+    npm.on('close', function (npmExitCode) {
+      if (npmExitCode) {
+        return cb(npmExitCode);
+      }
+      var post = run(join(bin, 'semantic-release'), ['post']);
+      post.on('close', cb);
+    });
+  });
+}
+
+function runBadges(cb) {
+  var url = package.repository.url.split('github.com/')[1].split('.git')[0];
+  console.log('[![Build Status](https://travis-ci.org/' + url + '.svg?branch=master)](https://travis-ci.org/' + url + ')');
+  console.log('[![Dependency Status](https://david-dm.org/' + url + '.svg)](https://david-dm.org/' + url + ')');
+  console.log('[![devDependency Status](https://david-dm.org/' + url + '/dev-status.svg)](https://david-dm.org/' + url + '#info=devDependencies)');
+  console.log('[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)')
+
+  cb(0);
+}
+
+function runTravis(cb) {
+  const stream = fs.createReadStream(__dirname + '/../travis.yml', {encoding: 'utf8'});
+  stream.pipe(process.stdout);
+  stream.on('close', cb);
+}
+
+function runGitIgnore(cb) {
+  console.log(['node_modules', 'dist', 'coverage'].join('\n'));
+
+  cb(0);
+}
+
+var cmd = {
+  build: runBuild,
+  coverage: runCoverage,
+  'js-test': runJSTest,
+  lint: runLint,
+  'semantic-release': runSemanticRelease,
+  test: runTest,
+  badges: runBadges,
+  travis: runTravis,
+  gitignore: runGitIgnore
+}[process.argv[2]];
+
+if (cmd) {
+  cmd(process.exit);
+}

@@ -1,0 +1,11 @@
+{
+	"extends": "./eslint",
+	"parser": "babel-eslint",
+	"ecmaFeatures": {
+		"modules": true
+	},
+	"env": {
+		"es6": true,
+		"mocha": true
+	}
+}
