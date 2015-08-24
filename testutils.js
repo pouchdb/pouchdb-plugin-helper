@@ -1,10 +1,11 @@
 var fs = require('fs');
 var path = require('path');
+var Promise = require('pouchdb/extras/promise');
+var chai = require('chai');
 
 exports.PouchDB = require('pouchdb').defaults({
   db: require('memdown')
 });
-exports.chai = require('chai');
 
 var testConfig;
 var home = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
@@ -15,7 +16,7 @@ try {
   testConfig = {};
 }
 
-exports.should = exports.chai.should();
+exports.should = chai.should();
 
 var db;
 
@@ -29,7 +30,9 @@ exports.teardown = function () {
 };
 
 exports.shouldThrowError = function (func) {
-  return func().then(function () {
+  return Promise.resolve().then(function () {
+    return func();
+  }).then(function () {
     exports.should.be.ok(false, 'No error thrown while it should have been');
   }).catch(function (err) {
     return err;
