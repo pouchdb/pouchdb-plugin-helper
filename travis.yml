@@ -21,9 +21,10 @@ script: npm run $COMMAND
 
 env:
   matrix:
-  - COMMAND=helper -- lint
-  - COMMAND=helper -- js-test
-  - COMMAND=build
+  - COMMAND='helper -- lint'
+  - COMMAND='helper -- js-test'
+  - COMMAND='build'
 
-after_success:
-  - npm run helper -- semantic-release
+#after_success:
+#  - npm run helper -- semantic-release
+
