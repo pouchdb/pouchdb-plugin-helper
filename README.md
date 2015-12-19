@@ -80,8 +80,42 @@ true.should.be.ok // no problem
 Makes a PouchDB database and returns it to you. Handy for use in ``mocha``'s
 ``beforeEach``.
 
+### setupWithDoc()
+``setup()``, with the following document in the database:
+```javascript
+{
+  _id: 'mytest',
+  test: true
+}
+```
+
+Returns a promise which resolves to the following object:
+```javascript
+{
+  db: '<the pouchdb db>',
+  rev: '1-xxx'
+}
+```
+
+### setupWithDocAndAttachment
+``setupWithDoc``, with the following attachment added to the database:
+```javascript
+{
+  _id: 'attachment_test',
+  _attachments: {
+    'text': {
+      data: new Buffer('abcd', 'ascii'),
+      type: 'text/plain'
+    }
+  }
+}
+```
+
+### setupHTTP()
+Similar to ``setup()``, but then on the database specified by ``BASE_URL`` and ``HTTP_AUTH`` (see below). Don't use at the same time as ``setup()``.
+
 ### teardown()
-Cleans up the database created by ``setup()``. Handy for use in ``mocha``'s
+Cleans up the database created by ``setup()`` or ``setupHTTP``. Handy for use in ``mocha``'s
 ``afterEach``. Returns a Promise.
 
 ### shouldThrowError(func)

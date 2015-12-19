@@ -25,6 +25,31 @@ exports.setup = function () {
   return db;
 };
 
+exports.setupWithDoc = function() {
+  exports.setup();
+  return db.put({
+    _id: 'mytest',
+    test: true
+  }).then(function (info) {
+    return {
+      db: db,
+      rev: info.rev
+    };
+  });
+}
+
+exports.setupWithDocAndAttachment = function () {
+  var res;
+  return exports.setupWithDoc().then(function (info) {
+    res = info;
+    var buffer = new Buffer('abcd', 'ascii');
+    return db.putAttachment('attachment_test', 'text', buffer, 'text/plain');
+  }).then(function (info) {
+    res.attRev = info.rev;
+    return res;
+  });
+}
+
 exports.teardown = function () {
   return db.destroy();
 };
@@ -33,7 +58,7 @@ exports.shouldThrowError = function (func) {
   return Promise.resolve().then(function () {
     return func();
   }).then(function () {
-    exports.should.be.ok(false, 'No error thrown while it should have been');
+    'No error thrown while it should have been'.should.equal('');
   }).catch(function (err) {
     return err;
   });
@@ -44,3 +69,8 @@ exports.HTTP_AUTH = testConfig.username ? {
   username: testConfig.username,
   password: testConfig.password
 } : null;
+
+exports.setupHTTP = function () {
+  db = new exports.PouchDB(exports.BASE_URL + '/pouchdb-plugin-helper-db', {auth: exports.HTTP_AUTH});
+  return db;
+};
