@@ -89,7 +89,7 @@ function runBuild(cb) {
   var name = join('dist', package.name + '.js');
   var minName = join('dist', package.name + '.min.js')
   var browserify = run(join(bin, 'browserify'), [
-    'index.js',
+    '.',
     '-g', join(nodemods, 'es3ify'),
     '-s', process.argv[3],
     '-o', name

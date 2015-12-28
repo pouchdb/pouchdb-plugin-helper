@@ -40,6 +40,7 @@ npm run helper -- test # shortcut for lint & coverage
 npm run helper -- badges # generate badges for use in README.md
 npm run helper -- travis # generate a relevant .travis.yml file
 npm run helper -- gitignore # generate a relevant .gitignore file
+npm run helper -- test # runs lint and coverage
 ```
 
 ### Notes
