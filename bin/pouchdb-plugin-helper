@@ -13,7 +13,8 @@ function run(cmd, args) {
   return proc;
 }
 
-var root = join(__dirname, '..');
+var root = join(process.cwd());
+var helperRoot = join(__dirname, '..');
 var nodemods = join(root, 'node_modules');
 var bin = join(nodemods, '.bin');
 
@@ -21,7 +22,7 @@ var package = JSON.parse(fs.readFileSync('./package.json'), {encoding: 'utf8'});
 
 function runLint(cb) {
   var eslintNormal = run(join(bin, 'eslint'), [
-    '-c', join(root, 'eslint'),
+    '-c', join(helperRoot, 'eslint'),
   ].concat(
     glob.sync('*.js')
   ).concat(
@@ -32,7 +33,7 @@ function runLint(cb) {
       return cb(eslintNormalExitCode);
     }
     var eslintTest = run(join(bin, 'eslint'), [
-      '-c', join(root, 'eslint-test'),
+      '-c', join(helperRoot, 'eslint-test'),
     ].concat(
       glob.sync('test/*.js')
     ));
