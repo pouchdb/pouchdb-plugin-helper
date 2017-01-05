@@ -21,7 +21,7 @@
     "kneden": "^1.0.0",
     "memdown": "^1.1.1",
     "mocha": "^2.3.4",
-    "pouchdb": "^5.1.0",
+    "pouchdb": "^6.1.1",
     "semantic-release": "^4.3.5",
     "uglify-js": "^2.6.1"
   },
