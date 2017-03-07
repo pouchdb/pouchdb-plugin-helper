@@ -1,6 +1,8 @@
 pouchdb-plugin-helper
 =====================
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/pouchdb/pouchdb-plugin-helper.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://travis-ci.org/pouchdb/pouchdb-plugin-helper.svg?branch=master)](https://travis-ci.org/pouchdb/pouchdb-plugin-helper)
 [![Dependency Status](https://david-dm.org/pouchdb/pouchdb-plugin-helper.svg)](https://david-dm.org/pouchdb/pouchdb-plugin-helper)
 [![devDependency Status](https://david-dm.org/pouchdb/pouchdb-plugin-helper/dev-status.svg)](https://david-dm.org/pouchdb/pouchdb-plugin-helper#info=devDependencies)
