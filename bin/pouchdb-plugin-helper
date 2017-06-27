@@ -108,29 +108,11 @@ function runBuild(cb) {
   });
 }
 
-function runSemanticRelease(cb) {
-  var pre = run(join(bin, 'semantic-release'), ['pre'])
-  pre.on('close', function (preExitCode) {
-    if (preExitCode) {
-      return cb(preExitCode);
-    }
-    var npm = run('npm', ['publish']);
-    npm.on('close', function (npmExitCode) {
-      if (npmExitCode) {
-        return cb(npmExitCode);
-      }
-      var post = run(join(bin, 'semantic-release'), ['post']);
-      post.on('close', cb);
-    });
-  });
-}
-
 function runBadges(cb) {
   var url = package.repository.url.split('github.com/')[1].split('.git')[0];
   console.log('[![Build Status](https://travis-ci.org/' + url + '.svg?branch=master)](https://travis-ci.org/' + url + ')');
   console.log('[![Dependency Status](https://david-dm.org/' + url + '.svg)](https://david-dm.org/' + url + ')');
   console.log('[![devDependency Status](https://david-dm.org/' + url + '/dev-status.svg)](https://david-dm.org/' + url + '#info=devDependencies)');
-  console.log('[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)')
 
   cb(0);
 }
@@ -152,7 +134,6 @@ var cmd = {
   coverage: runCoverage,
   'js-test': runJSTest,
   lint: runLint,
-  'semantic-release': runSemanticRelease,
   test: runTest,
   badges: runBadges,
   travis: runTravis,

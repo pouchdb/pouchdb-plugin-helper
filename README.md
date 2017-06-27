@@ -35,7 +35,6 @@ npm run helper -- build # builds a browserified version of the package
 npm run helper -- coverage # run js tests with coverage
 npm run helper -- js-test # run js tests
 npm run helper -- lint # run linter against source files
-npm run helper -- semantic-release # https://github.com/semantic-release/semantic-release
 npm run helper -- test # shortcut for lint & coverage
 npm run helper -- badges # generate badges for use in README.md
 npm run helper -- travis # generate a relevant .travis.yml file
@@ -53,10 +52,6 @@ npm run helper -- test # runs lint and coverage
 - The ``js-tests`` command runs all tests in the ``test`` subdirectory. It uses
   [mocha](https://mochajs.org/) to do so. Files in this directory (and in this
   directory only!) can use ES6, with as a bonus ES7's async & await.
-- The ``semantic-release`` command is equivalent to
-  ``semantic-release pre && npm publish && semantic-release post``, with
-  the advantage that there's no need to depend on the semantic-release
-  tool yourself.
 
 require() helpers
 -----------------

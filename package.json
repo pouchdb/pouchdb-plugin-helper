@@ -1,6 +1,6 @@
 {
   "name": "pouchdb-plugin-helper",
-  "version": "3.0.2",
+  "version": "4.0.0",
   "description": "A helper tool for PouchDB plugins to run tests and more",
   "repository": {
     "type": "git",
@@ -8,22 +8,23 @@
   },
   "bin": "bin/pouchdb-plugin-helper",
   "dependencies": {
-    "babel-eslint": "^6.0.0-beta.6",
+    "babel-eslint": "^7.2.3",
+    "babel-plugin-async-to-promises": "^1.0.5",
     "babel-polyfill": "^6.3.14",
     "babel-preset-es2015": "^6.3.13",
     "babel-register": "^6.3.13",
-    "browserify": "^13.0.0",
-    "chai": "^3.4.1",
+    "browserify": "^14.4.0",
+    "chai": "^4.0.2",
     "es3ify": "^0.2.1",
-    "eslint": "^2.0.0",
+    "eslint": "^4.1.1",
     "glob": "^7.0.0",
     "istanbul": "^0.4.1",
-    "kneden": "^1.0.0",
     "memdown": "^1.1.1",
-    "mocha": "^2.3.4",
-    "pouchdb": "^5.1.0",
-    "semantic-release": "^4.3.5",
-    "uglify-js": "^2.6.1"
+    "mocha": "^3.4.2",
+    "pouchdb": "^6.2.0",
+    "pouchdb-promise": "^6.2.0",
+    "semantic-release": "^6.3.6",
+    "uglify-js": "^3.0.20"
   },
   "license": "Apache-2.0",
   "scripts": {
